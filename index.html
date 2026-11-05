@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free PDF Maker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;font-family:Arial,sans-serif;
+ background:#f1f5f9;color:#172033;
+}
+header{
+ background:#243b80;color:white;
+ text-align:center;padding:28px 12px;
+}
+header h1{margin:0 0 10px}
+header p{margin:0}
+main{
+ max-width:750px;margin:25px auto;padding:15px;
+}
+.card{
+ background:white;padding:22px;margin-bottom:20px;
+ border-radius:14px;box-shadow:0 3px 12px #00000012;
+}
+h2{margin-top:0;color:#243b80}
+textarea,input{
+ width:100%;padding:12px;margin:10px 0;
+ border:1px solid #cbd5e1;border-radius:8px;
+ font-size:16px;
+}
+textarea{height:140px;resize:vertical}
+button{
+ background:#3156c9;color:white;border:0;
+ padding:13px 18px;border-radius:8px;
+ cursor:pointer;font-size:16px;width:100%;
+ margin-top:8px;
+}
+button:hover{background:#1e40af}
+.note{color:#64748b;font-size:13px}
+footer{text-align:center;padding:20px;color:#64748b}
+</style>
+</head>
+<body>
+
+<header>
+<h1>📄 Free PDF Maker</h1>
+<p>Create PDF Easily – 100% Free</p>
+</header>
+
+<main>
+
+<section class="card">
+<h2>📝 Text to PDF</h2>
+<input id="title" type="text" placeholder="Enter PDF title">
+<textarea id="text" placeholder="Write your text here..."></textarea>
+<button onclick="makeTextPDF()">Create Text PDF</button>
+</section>
+
+<section class="card">
+<h2>🖼️ Image to PDF</h2>
+<p>Select one or multiple images:</p>
+<input id="images" type="file" accept="image/*" multiple>
+<button onclick="makeImagePDF()">Create Image PDF</button>
+<p class="note">Your images are processed in your browser.</p>
+</section>
+
+</main>
+
+<footer>
+<p>© 2026 Free PDF Maker | Free Online Tools</p>
+</footer>
+
+<script>
+function makeTextPDF(){
+ if(!window.jspdf){
+  alert("PDF library load nahi hui. Internet check karein.");
+  return;
+ }
+ const title=document.getElementById("title").value.trim();
+ const text=document.getElementById("text").value.trim();
+
+ if(!text){
+  alert("Please enter some text first.");
+  return;
+ }
+
+ const {jsPDF}=window.jspdf;
+ const pdf=new jsPDF();
+ pdf.setFontSize(20);
+ pdf.text(title || "My PDF",15,20);
+ pdf.setFontSize(12);
+ const lines=pdf.splitTextToSize(text,180);
+ let y=32;
+
+ lines.forEach(line=>{
+  if(y>280){
+   pdf.addPage();
+   y=20;
+  }
+  pdf.text(line,15,y);
+  y+=7;
+ });
+
+ pdf.save("my-text.pdf");
+}
+
+async function makeImagePDF(){
+ if(!window.jspdf){
+  alert("PDF library load nahi hui. Internet check karein.");
+  return;
+ }
+
+ const files=document.getElementById("images").files;
+ if(!files.length){
+  alert("Please select images first.");
+  return;
+ }
+
+ const {jsPDF}=window.jspdf;
+ const pdf=new jsPDF();
+
+ try{
+  for(let i=0;i<files.length;i++){
+   const data=await new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=reject;
+    reader.readAsDataURL(files[i]);
+   });
+
+   const image=new Image();
+   await new Promise((resolve,reject)=>{
+    image.onload=resolve;
+    image.onerror=reject;
+    image.src=data;
+   });
+
+   if(i>0) pdf.addPage();
+
+   const pageW=pdf.internal.pageSize.getWidth();
+   const pageH=pdf.internal.pageSize.getHeight();
+   const ratio=Math.min(pageW/image.width,pageH/image.height);
+   const w=image.width*ratio;
+   const h=image.height*ratio;
+
+   pdf.addImage(data,"JPEG",
+    (pageW-w)/2,(pageH-h)/2,w,h);
+  }
+
+  pdf.save("my-images.pdf");
+ }catch(error){
+  alert("Image process nahi ho payi. Dusri image try karein.");
+ }
+}
+</script>
+
+</body>
+</html>
