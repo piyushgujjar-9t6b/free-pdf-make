@@ -154,6 +154,148 @@ async function makeImagePDF(){
   alert("Image process nahi ho payi. Dusri image try karein.");
  }
 }
+ // NEW PDF FEATURES
+document.addEventListener("DOMContentLoaded", function () {
+
+const section = document.createElement("div");
+
+section.innerHTML = `
+<style>
+.new-tools {
+  max-width: 700px;
+  margin: 25px auto;
+  padding: 20px;
+  background: #f1f6ff;
+  border-radius: 15px;
+  font-family: Arial;
+}
+.new-tools h2 { color: #123b75; }
+.new-tools input, .new-tools button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  box-sizing: border-box;
+}
+.new-tools button {
+  background: #1769e0;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+</style>
+
+<div class="new-tools">
+<h2>📚 Smart Study PDF</h2>
+<input id="studentName" placeholder="Student Name">
+<input id="subjectName" placeholder="Subject">
+<input id="studyImages" type="file" accept="image/*" multiple>
+<button id="makeStudyPDF">Create Study PDF</button>
+
+<hr>
+
+<h2>📑 Merge PDF</h2>
+<input id="mergeFiles" type="file" accept=".pdf,application/pdf" multiple>
+<button id="mergeButton">Merge PDF</button>
+<p id="mergeStatus"></p>
+</div>
+`;
+
+document.body.appendChild(section);
+
+// SMART STUDY PDF
+document.getElementById("makeStudyPDF").onclick = async function () {
+  const name = document.getElementById("studentName").value;
+  const subject = document.getElementById("subjectName").value;
+  const files = document.getElementById("studyImages").files;
+
+  if (!name || !subject || files.length === 0) {
+    alert("Name, Subject aur Photos select karein.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
+  pdf.setFontSize(24);
+  pdf.text("Study Notes", 105, 40, {align:"center"});
+  pdf.setFontSize(16);
+  pdf.text("Name: " + name, 20, 70);
+  pdf.text("Subject: " + subject, 20, 85);
+
+  for (let i = 0; i < files.length; i++) {
+    const data = await new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(files[i]);
+    });
+
+    pdf.addPage();
+    const img = new Image();
+    img.src = data;
+
+    await new Promise(resolve => img.onload = resolve);
+
+    const ratio = Math.min(170/img.width, 250/img.height);
+    const w = img.width * ratio;
+    const h = img.height * ratio;
+
+    pdf.addImage(data, "JPEG", (210-w)/2, 20, w, h);
+    pdf.setFontSize(10);
+    pdf.text("Page " + (i+1), 190, 285);
+  }
+
+  pdf.save("Smart-Study-Notes.pdf");
+};
+
+// MERGE PDF
+document.getElementById("mergeButton").onclick = async function () {
+  const files = document.getElementById("mergeFiles").files;
+  const status = document.getElementById("mergeStatus");
+
+  if (files.length < 2) {
+    alert("Kam se kam 2 PDF select karein.");
+    return;
+  }
+
+  try {
+    if (!window.PDFLib) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    const merged = await PDFLib.PDFDocument.create();
+
+    for (const file of files) {
+      const bytes = await file.arrayBuffer();
+      const pdf = await PDFLib.PDFDocument.load(bytes);
+      const pages = await merged.copyPages(pdf, pdf.getPageIndices());
+      pages.forEach(page => merged.addPage(page));
+    }
+
+    const result = await merged.save();
+    const blob = new Blob([result], {type:"application/pdf"});
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "Merged-PDF.pdf";
+    link.click();
+
+    URL.revokeObjectURL(url);
+    status.textContent = "PDF successfully merged!";
+  } catch (error) {
+    status.textContent = "PDF merge nahi ho paya. Dobara try karein.";
+  }
+};
+
+});
 </script>
 
 </body>
