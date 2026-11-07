@@ -205,56 +205,6 @@ section.innerHTML = `
 
 document.body.appendChild(section);
 
-// SMART STUDY PDF
-document.getElementById("makeStudyPDF").onclick = async function () {
-  const name = document.getElementById("studentName").value;
-  const subject = document.getElementById("subjectName").value;
- const description = document.getElementByld("studyDescription").value;
-  const files = document.getElementById("studyImages").files;
-
-  if (!name || !subject || files.length === 0) {
-    alert("Name, Subject aur Photos select karein.");
-    return;
-  }
-
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
-
-  pdf.setFontSize(24);
-  pdf.text("Study Notes", 105, 40, {align:"center"});
-  pdf.setFontSize(16);
-  pdf.text("Name: " + name, 20, 70);
-  pdf.text("Subject: " + subject, 20, 85);
- pdf.text("Description:",20,100);
- pdf.text(description||"No description added",20,110);
-
-  for (let i = 0; i < files.length; i++) {
-    const data = await new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.readAsDataURL(files[i]);
-    });
-
-    pdf.addPage();
-   const img = new Image();
-
-   await new Promise((resolve, reject) =>{
-    img.onload = resolve;
-    img.onerror = reject;
-    img.src = data;
-   });
-
-    const ratio = Math.min(170/img.width, 250/img.height);
-    const w = img.width * ratio;
-    const h = img.height * ratio;
-
-    pdf.addImage(data, "JPEG", (210-w)/2, 20, w, h);
-    pdf.setFontSize(10);
-    pdf.text("Page " + (i+1), 190, 285);
-  }
-
-  pdf.save("Smart-Study-Notes.pdf");
-};
 
 // MERGE PDF
 document.getElementById("mergeButton").onclick = async function () {
