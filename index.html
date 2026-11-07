@@ -1,152 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free PDF Maker</title>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
-<style>
-*{box-sizing:border-box}
-body{
- margin:0;font-family:Arial,sans-serif;
- background:#f1f5f9;color:#172033;
-}
-header{
- background:#243b80;color:white;
- text-align:center;padding:28px 12px;
-}
-header h1{margin:0 0 10px}
-header p{margin:0}
-main{
- max-width:750px;margin:25px auto;padding:15px;
-}
-.card{
- background:white;padding:22px;margin-bottom:20px;
- border-radius:14px;box-shadow:0 3px 12px #00000012;
-}
-h2{margin-top:0;color:#243b80}
-textarea,input{
- width:100%;padding:12px;margin:10px 0;
- border:1px solid #cbd5e1;border-radius:8px;
- font-size:16px;
-}
-textarea{height:140px;resize:vertical}
-button{
- background:#3156c9;color:white;border:0;
- padding:13px 18px;border-radius:8px;
- cursor:pointer;font-size:16px;width:100%;
- margin-top:8px;
-}
-button:hover{background:#1e40af}
-.note{color:#64748b;font-size:13px}
-footer{text-align:center;padding:20px;color:#64748b}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free PDF Make - Free PDF Tools</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f2f5fa;
+      color: #222;
+    }
+
+    header {
+      text-align: center;
+      background: #174ea6;
+      color: white;
+      padding: 25px 15px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: auto;
+    }
+
+    .tool {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      color: #174ea6;
+      margin-top: 0;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 12px;
+      border: 1px solid #bbb;
+      border-radius: 7px;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      margin: 12px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 7px;
+      background: #174ea6;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #0d397d;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #666;
+    }
+  </style>
 </head>
+
 <body>
 
-<header>
-<h1>📄 Free PDF Maker</h1>
-<p>Create PDF Easily – 100% Free</p>
-</header>
+  <header>
+    <h1>Free PDF Make</h1>
+    <p>Free PDF Tools - Easy and Fast</p>
+  </header>
 
-<main>
+  <main class="container">
 
-<section class="card">
-<h2>📝 Text to PDF</h2>
-<input id="title" type="text" placeholder="Enter PDF title">
-<textarea id="text" placeholder="Write your text here..."></textarea>
-<button onclick="makeTextPDF()">Create Text PDF</button>
-</section>
+    <!-- TEXT TO PDF -->
+    <section class="tool">
+      <h2>Text to PDF</h2>
+      <textarea id="pdfText" placeholder="Write your text here..."></textarea>
+      <button id="makeTextPDF">Create Text PDF</button>
+    </section>
 
-<section class="card">
-<h2>🖼️ Image to PDF</h2>
-<p>Select one or multiple images:</p>
-<input id="images" type="file" accept="image/*" multiple>
-<button onclick="makeImagePDF()">Create Image PDF</button>
-<p class="note">Your images are processed in your browser.</p>
-</section>
+    <!-- IMAGE TO PDF -->
+    <section class="tool">
+      <h2>Image to PDF</h2>
+      <input type="file" id="imageFiles" accept="image/jpeg,image/png" multiple>
+      <button id="makeImagePDF">Create Image PDF</button>
+    </section>
 
-</main>
+    <!-- MERGE PDF -->
+    <section class="tool">
+      <h2>Merge PDF</h2>
+      <input type="file" id="pdfFiles" accept="application/pdf" multiple>
+      <button id="mergePDF">Merge PDF</button>
+    </section>
 
-<footer>
-<p>© 2026 Free PDF Maker | Free Online Tools</p>
-</footer>
+  </main>
 
-<script>
-function makeTextPDF(){
- if(!window.jspdf){
-  alert("PDF library load nahi hui. Internet check karein.");
-  return;
- }
- const title=document.getElementById("title").value.trim();
- const text=document.getElementById("text").value.trim();
+  <footer>
+    <p>© 2026 Free PDF Make</p>
+  </footer>
 
- if(!text){
-  alert("Please enter some text first.");
-  return;
- }
+  <!-- PDF LIBRARIES -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
- const {jsPDF}=window.jspdf;
- const pdf=new jsPDF();
- pdf.setFontSize(20);
- pdf.text(title || "My PDF",15,20);
- pdf.setFontSize(12);
- const lines=pdf.splitTextToSize(text,180);
- let y=32;
+  <script>
+    // TEXT TO PDF
+    document.getElementById("makeTextPDF").onclick = function () {
+      const text = document.getElementById("pdfText").value;
 
- lines.forEach(line=>{
-  if(y>280){
-   pdf.addPage();
-   y=20;
-  }
-  pdf.text(line,15,y);
-  y+=7;
- });
+      if (!text.trim()) {
+        alert("Please enter some text!");
+        return;
+      }
 
- pdf.save("my-text.pdf");
-}
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
 
-async function makeImagePDF(){
- if(!window.jspdf){
-  alert("PDF library load nahi hui. Internet check karein.");
-  return;
- }
+      const lines = pdf.splitTextToSize(text, 170);
+      let y = 20;
 
- const files=document.getElementById("images").files;
- if(!files.length){
-  alert("Please select images first.");
-  return;
- }
+      lines.forEach(line => {
+        if (y > 275) {
+          pdf.addPage();
+          y = 20;
+        }
+        pdf.text(line, 20, y);
+        y += 8;
+      });
 
- const {jsPDF}=window.jspdf;
- const pdf=new jsPDF();
+      pdf.save("Text-PDF.pdf");
+    };
 
- try{
-  for(let i=0;i<files.length;i++){
-   const data=await new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=()=>resolve(reader.result);
-    reader.onerror=reject;
-    reader.readAsDataURL(files[i]);
-   });
 
-   if(i>0) pdf.addPage();
+    // IMAGE TO PDF
+    document.getElementById("makeImagePDF").onclick = async function () {
+      try {
+        const files = document.getElementById("imageFiles").files;
 
-   const pageW=pdf.internal.pageSize.getWidth();
-   const pageH=pdf.internal.pageSize.getHeight();
-   const ratio=Math.min(pageW/image.width,pageH/image.height);
-   const w=image.width*ratio;
-   const h=image.height*ratio;
+        if (files.length === 0) {
+          alert("Please select images!");
+          return;
+        }
 
-   pdf.addImage(data,"JPEG",
-    (pageW-w)/2,(pageH-h)/2,w,h);
-  }
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
 
-  pdf.save("my-images.pdf");
- }
- }
-}
-</script>
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+
+          if (!["image/jpeg", "image/png"].includes(file.type)) {
+            alert("Please select JPG or PNG images only.");
+            return;
+          }
+
+          const data = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+
+          const img = new Image();
+
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = data;
+          });
+
+          if (i > 0) pdf.addPage();
+
+          const ratio = Math.min(170 / img.width, 250 / img.height);
+          const w = img.width * ratio;
+          const h = img.height * ratio;
+
+          const format = file.type === "image/png" ? "PNG" : "JPEG";
+
+          pdf.addImage(data, format, (210 - w) / 2, 20, w, h);
+        }
+
+        pdf.save("Image-PDF.pdf");
+
+      } catch (error) {
+        console.error(error);
+        alert("Image PDF could not be created. Please try again.");
+      }
+    };
+
+
+    // MERGE PDF
+    document.getElementById("mergePDF").onclick = async function () {
+      try {
+        const files = document.getElementById("pdfFiles").files;
+
+        if (files.length < 2) {
+          alert("Please select at least 2 PDF files!");
+          return;
+        }
+
+        const mergedPdf = await PDFLib.PDFDocument.create();
+
+        for (const file of files) {
+          const bytes = await file.arrayBuffer();
+          const pdf = await PDFLib.PDFDocument.load(bytes);
+
+          const pages = await mergedPdf.copyPages(
+            pdf,
+            pdf.getPageIndices()
+          );
+
+          pages.forEach(page => mergedPdf.addPage(page));
+        }
+
+        const mergedBytes = await mergedPdf.save();
+        const blob = new Blob([mergedBytes], {
+          type: "application/pdf"
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "Merged-PDF.pdf";
+        link.click();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      } catch (error) {
+        console.error(error);
+        alert("PDF merge failed. Please check your PDF files.");
+      }
+    };
+  </script>
 
 </body>
 </html>
