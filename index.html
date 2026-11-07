@@ -130,13 +130,6 @@ async function makeImagePDF(){
     reader.readAsDataURL(files[i]);
    });
 
-   const image=new Image();
-   await new Promise((resolve,reject)=>{
-    image.onload=resolve;
-    image.onerror=reject;
-    image.src=data;
-   });
-
    if(i>0) pdf.addPage();
 
    const pageW=pdf.internal.pageSize.getWidth();
