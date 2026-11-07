@@ -190,6 +190,7 @@ section.innerHTML = `
 <h2>📚 Smart Study PDF</h2>
 <input id="studentName" placeholder="Student Name">
 <input id="subjectName" placeholder="Subject">
+<textarea id="studyDescription" placeholder="Write Description here..." rows="4"></textarea>
 <input id="studyImages" type="file" accept="image/*" multiple>
 <button id="makeStudyPDF">Create Study PDF</button>
 
@@ -208,6 +209,7 @@ document.body.appendChild(section);
 document.getElementById("makeStudyPDF").onclick = async function () {
   const name = document.getElementById("studentName").value;
   const subject = document.getElementById("subjectName").value;
+ const description = document.getElementByld("studyDescription").value;
   const files = document.getElementById("studyImages").files;
 
   if (!name || !subject || files.length === 0) {
@@ -223,6 +225,8 @@ document.getElementById("makeStudyPDF").onclick = async function () {
   pdf.setFontSize(16);
   pdf.text("Name: " + name, 20, 70);
   pdf.text("Subject: " + subject, 20, 85);
+ pdf.text("Description:",20,100);
+ pdf.text(description||"No description added",20,110);
 
   for (let i = 0; i < files.length; i++) {
     const data = await new Promise(resolve => {
