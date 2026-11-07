@@ -154,6 +154,81 @@ async function makeImagePDF(){
   alert("Image process nahi ho payi. Dusri image try karein.");
  }
 }
+ <!-- MERGE PDF TOOL -->
+<section class="tool" style="max-width:650px; margin:20px auto; padding:20px; background:#fff; border-radius:12px;">
+
+  <h2 style="color:#174ea6;">Merge PDF</h2>
+
+  <p>Select at least 2 PDF files to combine them.</p>
+
+  <input
+    type="file"
+    id="pdfFiles"
+    accept="application/pdf"
+    multiple
+  >
+
+  <button
+    id="mergePDF"
+    style="width:100%; padding:13px; background:#174ea6; color:white; border:0; border-radius:7px; margin-top:12px;"
+  >
+    Merge PDF
+  </button>
+
+</section>
+
+<!-- PDF LIBRARY -->
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+<!-- MERGE PDF JAVASCRIPT -->
+<script>
+document.getElementById("mergePDF").onclick = async function () {
+
+  try {
+    const files = document.getElementById("pdfFiles").files;
+
+    if (files.length < 2) {
+      alert("Please select at least 2 PDF files!");
+      return;
+    }
+
+    const mergedPdf = await PDFLib.PDFDocument.create();
+
+    for (const file of files) {
+
+      const bytes = await file.arrayBuffer();
+
+      const pdf = await PDFLib.PDFDocument.load(bytes);
+
+      const pages = await mergedPdf.copyPages(
+        pdf,
+        pdf.getPageIndices()
+      );
+
+      pages.forEach(page => mergedPdf.addPage(page));
+    }
+
+    const mergedBytes = await mergedPdf.save();
+
+    const blob = new Blob([mergedBytes], {
+      type: "application/pdf"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "Merged-PDF.pdf";
+    link.click();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  } catch (error) {
+    console.error(error);
+    alert("PDF merge failed. Please check your PDF files.");
+  }
+
+};
 </script>
 
 </body>
