@@ -1,262 +1,805 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free PDF Make - Free PDF Tools</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free PDF Make - Free PDF Tools</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background: #f2f5fa;
-      color: #222;
-    }
+body {
+  margin: 0;
+  padding: 16px;
+  font-family: Arial, sans-serif;
+  background: #f2f5fa;
+  color: #222;
+}
 
-    header {
-      text-align: center;
-      background: #174ea6;
-      color: white;
-      padding: 25px 15px;
-      border-radius: 12px;
-      margin-bottom: 25px;
-    }
+header {
+  text-align: center;
+  background: #174ea6;
+  color: white;
+  padding: 25px 15px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
 
-    header h1 {
-      margin: 0 0 8px;
-    }
+header h1 { margin: 0 0 8px; }
 
-    .container {
-      max-width: 650px;
-      margin: auto;
-    }
+.container {
+  max-width: 700px;
+  margin: auto;
+}
 
-    .tool {
-      background: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
+.tool {
+  background: white;
+  padding: 20px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
 
-    h2 {
-      color: #174ea6;
-      margin-top: 0;
-    }
+h2 {
+  color: #174ea6;
+  margin-top: 0;
+}
 
-    textarea {
-      width: 100%;
-      min-height: 150px;
-      padding: 12px;
-      border: 1px solid #bbb;
-      border-radius: 7px;
-      font-size: 16px;
-      resize: vertical;
-    }
+textarea, input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #bbb;
+  border-radius: 7px;
+  font-size: 15px;
+}
 
-    input[type="file"] {
-      width: 100%;
-      margin: 12px 0;
-    }
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
 
-    button {
-      width: 100%;
-      padding: 13px;
-      border: none;
-      border-radius: 7px;
-      background: #174ea6;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+button {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 7px;
+  background: #174ea6;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
 
-    button:hover {
-      background: #0d397d;
-    }
+button:hover { background: #0d397d; }
+button:disabled { opacity: 0.6; cursor: wait; }
 
-    footer {
-      text-align: center;
-      margin-top: 25px;
-      color: #666;
-    }
-  </style>
+small {
+  color: #666;
+  display: block;
+  line-height: 1.5;
+}
+
+footer {
+  text-align: center;
+  margin-top: 25px;
+  color: #666;
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <h1>Free PDF Make</h1>
-    <p>Free PDF Tools - Easy and Fast</p>
-  </header>
+<header>
+  <h1>Free PDF Make</h1>
+  <p>Free PDF Tools - Easy and Fast</p>
+</header>
 
-  <main class="container">
+<main class="container">
 
-    <!-- TEXT TO PDF -->
-    <section class="tool">
-      <h2>Text to PDF</h2>
-      <textarea id="pdfText" placeholder="Write your text here..."></textarea>
-      <button id="makeTextPDF">Create Text PDF</button>
-    </section>
+<!-- COMMON PDF NAME AND TITLE -->
+<section class="tool">
+  <h2>PDF Name & Title</h2>
 
-    <!-- IMAGE TO PDF -->
-    <section class="tool">
-      <h2>Image to PDF</h2>
-      <input type="file" id="imageFiles" accept="image/jpeg,image/png" multiple>
-      <button id="makeImagePDF">Create Image PDF</button>
-    </section>
+  <label>PDF File Name:</label>
+  <input id="outputName" type="text" value="My-PDF"
+         placeholder="Enter PDF file name">
 
-    <!-- MERGE PDF -->
-    <section class="tool">
-      <h2>Merge PDF</h2>
-      <input type="file" id="pdfFiles" accept="application/pdf" multiple>
-      <button id="mergePDF">Merge PDF</button>
-    </section>
+  <label>PDF Document Title:</label>
+  <input id="documentTitle" type="text"
+         placeholder="Enter PDF document title">
 
-  </main>
+  <small>Ye naam aur title neeche diye gaye PDF tools par apply honge.</small>
+</section>
 
-  <footer>
-    <p>© 2026 Free PDF Make</p>
-  </footer>
 
-  <!-- PDF LIBRARIES -->
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
-  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<!-- 1 TEXT TO PDF -->
+<section class="tool">
+  <h2>1. Text to PDF</h2>
 
-  <script>
-    // TEXT TO PDF
-    document.getElementById("makeTextPDF").onclick = function () {
-      const text = document.getElementById("pdfText").value;
+  <textarea id="pdfText"
+    placeholder="Write your text here..."></textarea>
 
-      if (!text.trim()) {
-        alert("Please enter some text!");
+  <button id="makeTextPDF">Create Text PDF</button>
+</section>
+
+
+<!-- 2 IMAGE TO PDF -->
+<section class="tool">
+  <h2>2. Image to PDF</h2>
+
+  <input type="file" id="imageFiles"
+         accept="image/jpeg,image/png" multiple>
+
+  <button id="makeImagePDF">Create Image PDF</button>
+</section>
+
+
+<!-- 3 MERGE PDF -->
+<section class="tool">
+  <h2>3. Merge PDF</h2>
+
+  <input type="file" id="mergeFiles"
+         accept="application/pdf" multiple>
+
+  <button id="mergePDF">Merge PDF</button>
+</section>
+
+
+<!-- 4 SPLIT PDF -->
+<section class="tool">
+  <h2>4. Split PDF</h2>
+
+  <input type="file" id="splitFile"
+         accept="application/pdf">
+
+  <label>Pages per PDF file:</label>
+  <input type="number" id="pagesPerFile"
+         min="1" value="1">
+
+  <small>Example: 1 likhne par har page alag PDF banega. 2 likhne par har PDF mein 2 pages honge.</small>
+
+  <button id="splitPDF">Split PDF</button>
+</section>
+
+
+<!-- 5 COMPRESS PDF -->
+<section class="tool">
+  <h2>5. Compress PDF</h2>
+
+  <input type="file" id="compressFile"
+         accept="application/pdf">
+
+  <label>Target Size:</label>
+
+  <input type="number" id="targetSize"
+         min="1" value="500">
+
+  <select id="targetUnit">
+    <option value="KB">KB</option>
+    <option value="MB">MB</option>
+  </select>
+
+  <small>PDF ko target size ke kareeb lane ki koshish hogi. Exact size guaranteed nahi hai. Is process mein pages images banenge.</small>
+
+  <button id="compressPDF">Compress PDF</button>
+</section>
+
+
+<!-- 6 PDF TO JPG -->
+<section class="tool">
+  <h2>6. PDF to JPG</h2>
+
+  <input type="file" id="jpgFile"
+         accept="application/pdf">
+
+  <button id="pdfToJPG">Convert PDF to JPG</button>
+</section>
+
+
+<!-- 7 ROTATE PDF -->
+<section class="tool">
+  <h2>7. Rotate PDF</h2>
+
+  <input type="file" id="rotateFile"
+         accept="application/pdf">
+
+  <label>Rotation:</label>
+
+  <select id="rotation">
+    <option value="90">90 Degrees</option>
+    <option value="180">180 Degrees</option>
+    <option value="270">270 Degrees</option>
+  </select>
+
+  <button id="rotatePDF">Rotate PDF</button>
+</section>
+
+
+<!-- 8 ORGANIZE PDF -->
+<section class="tool">
+  <h2>8. Organize PDF</h2>
+
+  <input type="file" id="organizeFile"
+         accept="application/pdf">
+
+  <label>Enter page order:</label>
+
+  <input type="text" id="pageOrder"
+         placeholder="Example: 3,1,2">
+
+  <small>Example: 3,1,2 ka matlab pehle page 3, phir page 1, phir page 2. Jo pages nahi likhoge woh remove ho jayenge.</small>
+
+  <button id="organizePDF">Organize PDF</button>
+</section>
+
+</main>
+
+<footer>
+  <p>© 2026 Free PDF Make</p>
+</footer>
+
+
+<!-- PDF LIBRARIES -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+
+<script>
+
+// COMMON FUNCTIONS
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+
+function getFileName() {
+  let name = document.getElementById("outputName").value.trim();
+
+  name = name.replace(/[\\/:*?"<>|]+/g, "-");
+  name = name.replace(/\.pdf$/i, "");
+
+  return name || "My-PDF";
+}
+
+
+function getDocumentTitle() {
+  return document.getElementById("documentTitle").value.trim()
+    || getFileName();
+}
+
+
+function setPDFTitle(pdf) {
+  pdf.setTitle(getDocumentTitle());
+}
+
+
+function setJSPDFTitle(pdf) {
+  pdf.setProperties({
+    title: getDocumentTitle()
+  });
+}
+
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+
+async function loadPDFFile(file) {
+  const bytes = await file.arrayBuffer();
+  return PDFLib.PDFDocument.load(bytes);
+}
+
+
+// 1. TEXT TO PDF
+
+document.getElementById("makeTextPDF").onclick = function () {
+  try {
+    const text = document.getElementById("pdfText").value;
+
+    if (!text.trim()) {
+      alert("Please enter some text!");
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    setJSPDFTitle(pdf);
+
+    const lines = pdf.splitTextToSize(text, 170);
+    let y = 20;
+
+    lines.forEach(line => {
+      if (y > 275) {
+        pdf.addPage();
+        y = 20;
+      }
+
+      pdf.text(line, 20, y);
+      y += 8;
+    });
+
+    pdf.save(getFileName() + ".pdf");
+
+  } catch (error) {
+    console.error(error);
+    alert("Text PDF could not be created.");
+  }
+};
+
+
+// 2. IMAGE TO PDF
+
+document.getElementById("makeImagePDF").onclick = async function () {
+  try {
+    const files = document.getElementById("imageFiles").files;
+
+    if (files.length === 0) {
+      alert("Please select images!");
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    setJSPDFTitle(pdf);
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      if (!["image/jpeg", "image/png"].includes(file.type)) {
+        alert("Please select JPG or PNG images only.");
         return;
       }
 
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF();
-
-      const lines = pdf.splitTextToSize(text, 170);
-      let y = 20;
-
-      lines.forEach(line => {
-        if (y > 275) {
-          pdf.addPage();
-          y = 20;
-        }
-        pdf.text(line, 20, y);
-        y += 8;
+      const data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
       });
 
-      pdf.save("Text-PDF.pdf");
-    };
+      const img = new Image();
+
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = data;
+      });
+
+      if (i > 0) pdf.addPage();
+
+      const ratio = Math.min(170 / img.width, 250 / img.height);
+      const w = img.width * ratio;
+      const h = img.height * ratio;
+
+      const format = file.type === "image/png" ? "PNG" : "JPEG";
+
+      pdf.addImage(data, format, (210 - w) / 2, 20, w, h);
+    }
+
+    pdf.save(getFileName() + ".pdf");
+
+  } catch (error) {
+    console.error(error);
+    alert("Image PDF could not be created.");
+  }
+};
 
 
-    // IMAGE TO PDF
-    document.getElementById("makeImagePDF").onclick = async function () {
-      try {
-        const files = document.getElementById("imageFiles").files;
+// 3. MERGE PDF
 
-        if (files.length === 0) {
-          alert("Please select images!");
-          return;
-        }
+document.getElementById("mergePDF").onclick = async function () {
+  try {
+    const files = document.getElementById("mergeFiles").files;
 
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF();
+    if (files.length < 2) {
+      alert("Please select at least 2 PDF files!");
+      return;
+    }
 
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
+    const mergedPdf = await PDFLib.PDFDocument.create();
 
-          if (!["image/jpeg", "image/png"].includes(file.type)) {
-            alert("Please select JPG or PNG images only.");
-            return;
-          }
+    for (const file of files) {
+      const pdf = await loadPDFFile(file);
 
-          const data = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
+      const pages = await mergedPdf.copyPages(
+        pdf,
+        pdf.getPageIndices()
+      );
 
-          const img = new Image();
+      pages.forEach(page => mergedPdf.addPage(page));
+    }
 
-          await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = reject;
-            img.src = data;
-          });
+    setPDFTitle(mergedPdf);
 
-          if (i > 0) pdf.addPage();
+    const bytes = await mergedPdf.save();
 
-          const ratio = Math.min(170 / img.width, 250 / img.height);
-          const w = img.width * ratio;
-          const h = img.height * ratio;
+    downloadBlob(
+      new Blob([bytes], { type: "application/pdf" }),
+      getFileName() + ".pdf"
+    );
 
-          const format = file.type === "image/png" ? "PNG" : "JPEG";
+  } catch (error) {
+    console.error(error);
+    alert("PDF merge failed. Please check your PDF files.");
+  }
+};
 
-          pdf.addImage(data, format, (210 - w) / 2, 20, w, h);
-        }
 
-        pdf.save("Image-PDF.pdf");
+// 4. SPLIT PDF
 
-      } catch (error) {
-        console.error(error);
-        alert("Image PDF could not be created. Please try again.");
+document.getElementById("splitPDF").onclick = async function () {
+  try {
+    const file = document.getElementById("splitFile").files[0];
+    const groupSize = parseInt(
+      document.getElementById("pagesPerFile").value
+    );
+
+    if (!file) {
+      alert("Please select a PDF!");
+      return;
+    }
+
+    if (!Number.isInteger(groupSize) || groupSize < 1) {
+      alert("Please enter a valid number of pages.");
+      return;
+    }
+
+    const source = await loadPDFFile(file);
+    const totalPages = source.getPageCount();
+    const baseName = getFileName();
+
+    let part = 1;
+
+    for (let start = 0; start < totalPages; start += groupSize) {
+      const end = Math.min(start + groupSize, totalPages);
+      const output = await PDFLib.PDFDocument.create();
+
+      const indices = [];
+
+      for (let i = start; i < end; i++) {
+        indices.push(i);
       }
-    };
+
+      const pages = await output.copyPages(source, indices);
+      pages.forEach(page => output.addPage(page));
+
+      setPDFTitle(output);
+
+      const bytes = await output.save();
+
+      downloadBlob(
+        new Blob([bytes], { type: "application/pdf" }),
+        baseName + "-part-" + part + ".pdf"
+      );
+
+      part++;
+    }
+
+    alert("PDF split complete!");
+
+  } catch (error) {
+    console.error(error);
+    alert("PDF split failed. Please check your PDF.");
+  }
+};
 
 
-    // MERGE PDF
-    document.getElementById("mergePDF").onclick = async function () {
-      try {
-        const files = document.getElementById("pdfFiles").files;
+// 5. COMPRESS PDF
 
-        if (files.length < 2) {
-          alert("Please select at least 2 PDF files!");
-          return;
-        }
+document.getElementById("compressPDF").onclick = async function () {
+  try {
+    const file = document.getElementById("compressFile").files[0];
 
-        const mergedPdf = await PDFLib.PDFDocument.create();
+    const target = Number(
+      document.getElementById("targetSize").value
+    );
 
-        for (const file of files) {
-          const bytes = await file.arrayBuffer();
-          const pdf = await PDFLib.PDFDocument.load(bytes);
+    const unit = document.getElementById("targetUnit").value;
 
-          const pages = await mergedPdf.copyPages(
-            pdf,
-            pdf.getPageIndices()
-          );
+    if (!file) {
+      alert("Please select a PDF!");
+      return;
+    }
 
-          pages.forEach(page => mergedPdf.addPage(page));
-        }
+    if (!Number.isFinite(target) || target <= 0) {
+      alert("Please enter a valid target size.");
+      return;
+    }
 
-        const mergedBytes = await mergedPdf.save();
-        const blob = new Blob([mergedBytes], {
-          type: "application/pdf"
+    const targetBytes = target * (unit === "MB" ? 1024 * 1024 : 1024);
+
+    const originalBytes = await file.arrayBuffer();
+
+    const pdfDocument = await pdfjsLib.getDocument({
+      data: new Uint8Array(originalBytes)
+    }).promise;
+
+    const attempts = [
+      { scale: 1.4, quality: 0.75 },
+      { scale: 1.1, quality: 0.60 },
+      { scale: 0.9, quality: 0.48 },
+      { scale: 0.75, quality: 0.38 },
+      { scale: 0.6, quality: 0.28 }
+    ];
+
+    let bestBlob = null;
+
+    for (const setting of attempts) {
+      const { jsPDF } = window.jspdf;
+      let output = null;
+
+      for (let i = 1; i <= pdfDocument.numPages; i++) {
+        const page = await pdfDocument.getPage(i);
+
+        const originalViewport = page.getViewport({ scale: 1 });
+        const viewport = page.getViewport({
+          scale: setting.scale
         });
 
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
 
-        link.href = url;
-        link.download = "Merged-PDF.pdf";
-        link.click();
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
 
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        await page.render({
+          canvasContext: context,
+          viewport: viewport
+        }).promise;
 
-      } catch (error) {
-        console.error(error);
-        alert("PDF merge failed. Please check your PDF files.");
+        const imageData = canvas.toDataURL(
+          "image/jpeg",
+          setting.quality
+        );
+
+        if (i === 1) {
+          output = new jsPDF({
+            orientation: originalViewport.width > originalViewport.height
+              ? "landscape" : "portrait",
+            unit: "pt",
+            format: [
+              originalViewport.width,
+              originalViewport.height
+            ],
+            compress: true
+          });
+
+          setJSPDFTitle(output);
+        } else {
+          output.addPage(
+            [
+              originalViewport.width,
+              originalViewport.height
+            ],
+            originalViewport.width > originalViewport.height
+              ? "landscape" : "portrait"
+          );
+        }
+
+        output.addImage(
+          imageData,
+          "JPEG",
+          0,
+          0,
+          originalViewport.width,
+          originalViewport.height
+        );
+
+        canvas.width = 0;
+        canvas.height = 0;
       }
-    };
-  </script>
+
+      const candidate = output.output("blob");
+      bestBlob = candidate;
+
+      if (candidate.size <= targetBytes) {
+        break;
+      }
+    }
+
+    if (!bestBlob) {
+      throw new Error("Compression failed");
+    }
+
+    downloadBlob(bestBlob, getFileName() + ".pdf");
+
+    if (bestBlob.size <= targetBytes) {
+      alert("Compression complete! Target size achieved.");
+    } else {
+      alert(
+        "PDF compressed, but target size could not be reached. " +
+        "Final size: " +
+        (bestBlob.size / 1024).toFixed(1) +
+        " KB"
+      );
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Compression failed. The PDF may be too large or protected.");
+  }
+};
+
+
+// 6. PDF TO JPG
+
+document.getElementById("pdfToJPG").onclick = async function () {
+  try {
+    const file = document.getElementById("jpgFile").files[0];
+
+    if (!file) {
+      alert("Please select a PDF!");
+      return;
+    }
+
+    const bytes = await file.arrayBuffer();
+
+    const pdf = await pdfjsLib.getDocument({
+      data: new Uint8Array(bytes)
+    }).promise;
+
+    const baseName = getFileName();
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale: 1.5 });
+
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+
+      canvas.width = Math.ceil(viewport.width);
+      canvas.height = Math.ceil(viewport.height);
+
+      await page.render({
+        canvasContext: context,
+        viewport: viewport
+      }).promise;
+
+      const blob = await new Promise(resolve => {
+        canvas.toBlob(resolve, "image/jpeg", 0.90);
+      });
+
+      if (!blob) {
+        throw new Error("Image conversion failed");
+      }
+
+      downloadBlob(
+        blob,
+        baseName + "-page-" + i + ".jpg"
+      );
+
+      canvas.width = 0;
+      canvas.height = 0;
+    }
+
+    alert("PDF to JPG conversion complete!");
+
+  } catch (error) {
+    console.error(error);
+    alert("PDF to JPG conversion failed.");
+  }
+};
+
+
+// 7. ROTATE PDF
+
+document.getElementById("rotatePDF").onclick = async function () {
+  try {
+    const file = document.getElementById("rotateFile").files[0];
+
+    if (!file) {
+      alert("Please select a PDF!");
+      return;
+    }
+
+    const angle = Number(
+      document.getElementById("rotation").value
+    );
+
+    const pdf = await loadPDFFile(file);
+
+    pdf.getPages().forEach(page => {
+      const current = page.getRotation().angle;
+      page.setRotation(PDFLib.degrees((current + angle) % 360));
+    });
+
+    setPDFTitle(pdf);
+
+    const bytes = await pdf.save();
+
+    downloadBlob(
+      new Blob([bytes], { type: "application/pdf" }),
+      getFileName() + ".pdf"
+    );
+
+  } catch (error) {
+    console.error(error);
+    alert("PDF rotation failed.");
+  }
+};
+
+
+// 8. ORGANIZE PDF
+
+document.getElementById("organizePDF").onclick = async function () {
+  try {
+    const file = document.getElementById("organizeFile").files[0];
+    const orderText = document.getElementById("pageOrder").value;
+
+    if (!file) {
+      alert("Please select a PDF!");
+      return;
+    }
+
+    if (!orderText.trim()) {
+      alert("Please enter page order, such as 3,1,2");
+      return;
+    }
+
+    const source = await loadPDFFile(file);
+    const totalPages = source.getPageCount();
+
+    const order = orderText
+      .split(",")
+      .map(item => Number(item.trim()));
+
+    if (
+      order.some(page =>
+        !Number.isInteger(page) ||
+        page < 1 ||
+        page > totalPages
+      )
+    ) {
+      alert("Invalid page number. This PDF has " +
+        totalPages + " pages.");
+      return;
+    }
+
+    if (new Set(order).size !== order.length) {
+      alert("Please do not repeat page numbers.");
+      return;
+    }
+
+    const indices = order.map(page => page - 1);
+
+    const output = await PDFLib.PDFDocument.create();
+
+    const pages = await output.copyPages(source, indices);
+    pages.forEach(page => output.addPage(page));
+
+    setPDFTitle(output);
+
+    const bytes = await output.save();
+
+    downloadBlob(
+      new Blob([bytes], { type: "application/pdf" }),
+      getFileName() + ".pdf"
+    );
+
+  } catch (error) {
+    console.error(error);
+    alert("Organize PDF failed.");
+  }
+};
+
+</script>
 
 </body>
 </html>
